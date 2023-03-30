@@ -1,0 +1,17 @@
+const functions = require("firebase-functions");
+const admin = require("firebase-admin");
+exports.filterserveY = functions
+    .region("asia-northeast1")
+    .database.ref("tickets/Y/main")
+    .onWrite((change, context) => {
+      const itemsRef = admin.database().ref("tickets/Y/main");
+      const filteredItemsRef = admin.database().ref("tickets/Y/serve");
+      return itemsRef.orderByChild("served")
+          .equalTo(false)
+          .once("value")
+          .then((snapshot) => {
+            const filteredData = snapshot.val();
+            return filteredItemsRef.set(filteredData);
+          })
+          .catch((error) => console.log(error));
+    });

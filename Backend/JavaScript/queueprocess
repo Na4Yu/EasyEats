@@ -1,0 +1,221 @@
+const functions = require("firebase-functions");
+const admin = require("firebase-admin");
+
+exports.processQueue = functions
+    .region("asia-southeast1")
+    .database.instance("//Realtime Database ID//")
+    .ref("/ticketqueue/{orderKey}")
+    .onCreate(async (snapshot, context) => {
+      const orderKey = context.params.orderKey;
+      const orderVal = snapshot.val();
+      const orderRef = snapshot.ref;
+      const flagref = orderRef.child("flag");
+      const c1 = orderVal.c['1'];
+      const c2 = orderVal.c['2'];
+      const g1 = orderVal.g['1'];
+      const s1 = orderVal.s['1'];
+      const s2 = orderVal.s['2'];
+      const t1 = orderVal.t['1'];
+      const y1 = orderVal.y['1'];
+      const counterRef = admin.database().ref("counter");
+      const ticketRef = admin.database().ref("tickets");
+      const counterc = counterRef.child("c");
+      const counterg = counterRef.child("g");
+      const counters = counterRef.child("s");
+      const countert = counterRef.child("t");
+      const countery = counterRef.child("y");
+      const ticketRefC = ticketRef.child("C/main");
+      const ticketRefG = ticketRef.child("G/main");
+      const ticketRefS = ticketRef.child("S/main");
+      const ticketRefT = ticketRef.child("T/main");
+      const ticketRefY = ticketRef.child("Y/main");
+      function checkCounterTransaction(currentData) {
+        if (currentData === null || currentData === undefined) {
+          currentData = 0;
+        }
+        return currentData + 1;
+      }
+
+      async function checkTransaction() {
+        if (c1+c2 !== 0) {
+            let returnresult = null;
+            const counterTransactionPromise = counterc.transaction(checkCounterTransaction)
+                .then((result) => {
+                    if (result.committed) {
+                        return result.snapshot.val();
+                    } else {
+                        console.log(`C:Counter Transaction Aborted for ${orderKey}`);
+                        return null;
+                    }
+                });
+            returnresult = await counterTransactionPromise;
+            const cData = {
+                [returnresult]: {
+                    1: c1,
+                    2: c2,
+                    "orderKey": orderKey,
+                    "serveable": false,
+                    "served": false
+                }
+            };
+            console.log(`C Logger Result = ${returnresult}`);
+            if (returnresult !== null) {
+                ticketRefC.update(cData)
+                  .then(() => {
+                    console.log(`C:Data Updated Successfully for ${orderKey}`);
+                  })
+                  .catch((error) => {
+                    console.error(`C:Error Setting Data for ${orderKey}`);
+                  });
+            }
+        }
+        if (g1 !== 0) {
+            let returnresult = null;
+            const counterTransactionPromise = counterg.transaction(checkCounterTransaction)
+                .then((result) => {
+                    if (result.committed) {
+                        return result.snapshot.val();
+                    } else {
+                        console.log(`G:Counter Transaction Aborted for ${orderKey}`);
+                        return null;
+                    }
+                });
+            returnresult = await counterTransactionPromise;
+            const gData = {
+                [returnresult]: {
+                    1: g1,
+                    "orderKey": orderKey,
+                    "serveable": false,
+                    "served": false
+                }
+            };
+            console.log(`G Logger Result = ${returnresult}`);
+            if (returnresult !== null) {
+                ticketRefG.update(gData)
+                  .then(() => {
+                    console.log(`G:Data Updated Successfully for ${orderKey}`);
+                  })
+                  .catch((error) => {
+                    console.error(`G:Error Setting Data for ${orderKey}`);
+                  });
+            }
+        }
+        if (s1+s2 !== 0) {
+            let returnresult = null;
+            const counterTransactionPromise = counters.transaction(checkCounterTransaction)
+                .then((result) => {
+                    if (result.committed) {
+                        return result.snapshot.val();
+                    } else {
+                        console.log(`S:Counter Transaction Aborted for ${orderKey}`);
+                        return null;
+                    }
+                });
+            returnresult = await counterTransactionPromise;
+            const sData = {
+                [returnresult]: {
+                    1: s1,
+                    2: s2,
+                    "orderKey": orderKey,
+                    "serveable": false,
+                    "served": false
+                }
+            };
+            console.log(`S Logger Result = ${returnresult}`);
+            if (returnresult !== null) {
+                ticketRefS.update(sData)
+                  .then(() => {
+                    console.log(`S:Data Updated Successfully for ${orderKey}`);
+                  })
+                  .catch((error) => {
+                    console.error(`S:Error Setting Data for ${orderKey}`);
+                  });
+            }
+        }
+        if (t1 !== 0) {
+            let returnresult = null;
+            const counterTransactionPromise = countert.transaction(checkCounterTransaction)
+                .then((result) => {
+                    if (result.committed) {
+                        return result.snapshot.val();
+                    } else {
+                        console.log(`T:Counter Transaction Aborted for ${orderKey}`);
+                        return null;
+                    }
+                });
+            returnresult = await counterTransactionPromise;
+            const tData = {
+                [returnresult]: {
+                    1: t1,
+                    "orderKey": orderKey,
+                    "serveable": false,
+                    "served": false
+                }
+            };
+            console.log(`T Logger Result = ${returnresult}`);
+            if (returnresult !== null) {
+                ticketRefT.update(tData)
+                  .then(() => {
+                    console.log(`T:Data Updated Successfully for ${orderKey}`);
+                  })
+                  .catch((error) => {
+                    console.error(`T:Error Setting Data for ${orderKey}`);
+                  });
+            }
+        }
+        if (y1 !== 0) {
+            let returnresult = null;
+            const counterTransactionPromise = countery.transaction(checkCounterTransaction)
+                .then((result) => {
+                    if (result.committed) {
+                        return result.snapshot.val();
+                    } else {
+                        console.log(`Y:Counter Transaction Aborted for ${orderKey}`);
+                        return null;
+                    }
+                });
+            returnresult = await counterTransactionPromise;
+            const yData = {
+                [returnresult]: {
+                    1: y1,
+                    "orderKey": orderKey,
+                    "serveable": false,
+                    "served": false
+                }
+            };
+            console.log(`Y Logger Result = ${returnresult}`);
+            if (returnresult !== null) {
+                ticketRefY.update(yData)
+                  .then(() => {
+                    console.log(`Y:Data Updated Successfully for ${orderKey}`);
+                  })
+                  .catch((error) => {
+                    console.error(`Y:Error Setting Data for ${orderKey}`);
+                  });
+            }
+        }
+        orderRef.remove();
+        console.log(`Function Finished for ${orderKey}`);
+
+      }
+      function checkToggleTransaction(currentData) {
+        if (currentData === null || currentData === undefined) {
+            currentData = false;
+        }
+        if (currentData === true) {
+            return;
+        }
+        return true;
+      }
+      flagref.transaction(checkToggleTransaction)
+        .then((result) => {
+            if (result.committed) {
+                checkTransaction();
+            } else {
+                console.log(`Flag:Transaction Aborted for ${orderKey}`);
+            }
+        })
+        .catch((error) => {
+            console.error(`Flag:Transaction Failed for ${orderKey} due to ${error}`);
+        });
+    });
