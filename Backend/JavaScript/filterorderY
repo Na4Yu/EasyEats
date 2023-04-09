@@ -1,6 +1,6 @@
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
-exports.filterorderY = functions
+exports.Function = functions
     .region("asia-northeast1")
     .database.ref("tickets/Y/main")
     .onWrite((change, context) => {

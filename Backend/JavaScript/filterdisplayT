@@ -2,12 +2,12 @@ const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 exports.Function = functions
     .region("asia-northeast1")
-    .database.ref("tickets/S/main")
+    .database.ref("tickets/T/serve")
     .onWrite((change, context) => {
-      const itemsRef = admin.database().ref("tickets/S/main");
-      const filteredItemsRef = admin.database().ref("tickets/S/serve");
-      return itemsRef.orderByChild("served")
-          .equalTo(false)
+      const itemsRef = admin.database().ref("tickets/T/serve");
+      const filteredItemsRef = admin.database().ref("tickets/T/display");
+      return itemsRef.orderByChild("serveable")
+          .equalTo(true)
           .once("value")
           .then((snapshot) => {
             const filteredData = snapshot.val();
