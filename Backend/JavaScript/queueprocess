@@ -3,9 +3,13 @@ const admin = require("firebase-admin");
 
 exports.processQueue = functions
     .region("asia-southeast1")
-    .database.instance("//Realtime Database ID//")
+    .database.instance("//Realtime Database Id")
     .ref("/ticketqueue/{orderKey}")
-    .onCreate(async (snapshot, context) => {
+    .onWrite(async (change, context) => {
+      const snapshot = change.after;
+      console.log(`val of snapshot is aa${snapshot.val()}aa`)
+      console.log(`haschildren${snapshot.hasChildren()}`)
+      if (snapshot.hasChildren()) {
       const orderKey = context.params.orderKey;
       const orderVal = snapshot.val();
       const orderRef = snapshot.ref;
@@ -19,6 +23,7 @@ exports.processQueue = functions
       const y1 = orderVal.y['1'];
       const counterRef = admin.database().ref("counter");
       const ticketRef = admin.database().ref("tickets");
+      const archiveRef = admin.database().ref("orderarchives");
       const counterc = counterRef.child("c");
       const counterg = counterRef.child("g");
       const counters = counterRef.child("s");
@@ -29,6 +34,12 @@ exports.processQueue = functions
       const ticketRefS = ticketRef.child("S/main");
       const ticketRefT = ticketRef.child("T/main");
       const ticketRefY = ticketRef.child("Y/main");
+      const keyRefC = ticketRef.child("keylist/c");
+      const keyRefG = ticketRef.child("keylist/g");
+      const keyRefS = ticketRef.child("keylist/s");
+      const keyRefT = ticketRef.child("keylist/t");
+      const keyRefY = ticketRef.child("keylist/y");
+
       function checkCounterTransaction(currentData) {
         if (currentData === null || currentData === undefined) {
           currentData = 0;
@@ -53,13 +64,21 @@ exports.processQueue = functions
                 [returnresult]: {
                     1: c1,
                     2: c2,
-                    "orderKey": orderKey,
                     "serveable": false,
                     "served": false
                 }
             };
+            const ckey = {
+                [orderKey]: {
+                    "keynum": returnresult
+                }
+            };
             console.log(`C Logger Result = ${returnresult}`);
             if (returnresult !== null) {
+                keyRefC.update(ckey)
+                .catch((error) => {
+                    console.error(`C:Error Setting KeyLegend for ${orderKey}`)
+                })
                 ticketRefC.update(cData)
                   .then(() => {
                     console.log(`C:Data Updated Successfully for ${orderKey}`);
@@ -84,13 +103,21 @@ exports.processQueue = functions
             const gData = {
                 [returnresult]: {
                     1: g1,
-                    "orderKey": orderKey,
                     "serveable": false,
                     "served": false
                 }
             };
+            const gkey = {
+                [orderKey]: {
+                    "keynum": returnresult
+                }
+            };
             console.log(`G Logger Result = ${returnresult}`);
             if (returnresult !== null) {
+                keyRefG.update(gkey)
+                .catch((error) => {
+                    console.error(`G:Error Setting KeyLegend for ${orderKey}`)
+                })
                 ticketRefG.update(gData)
                   .then(() => {
                     console.log(`G:Data Updated Successfully for ${orderKey}`);
@@ -116,13 +143,21 @@ exports.processQueue = functions
                 [returnresult]: {
                     1: s1,
                     2: s2,
-                    "orderKey": orderKey,
                     "serveable": false,
                     "served": false
                 }
             };
+            const skey = {
+                [orderKey]: {
+                    "keynum": returnresult
+                }
+            };
             console.log(`S Logger Result = ${returnresult}`);
             if (returnresult !== null) {
+                keyRefS.update(skey)
+                .catch((error) => {
+                    console.error(`S:Error Setting KeyLegend for ${orderKey}`)
+                })
                 ticketRefS.update(sData)
                   .then(() => {
                     console.log(`S:Data Updated Successfully for ${orderKey}`);
@@ -147,13 +182,21 @@ exports.processQueue = functions
             const tData = {
                 [returnresult]: {
                     1: t1,
-                    "orderKey": orderKey,
                     "serveable": false,
                     "served": false
                 }
             };
+            const tkey = {
+                [orderKey]: {
+                    "keynum": returnresult
+                }
+            };
             console.log(`T Logger Result = ${returnresult}`);
             if (returnresult !== null) {
+                keyRefT.update(tkey)
+                .catch((error) => {
+                    console.error(`T:Error Setting KeyLegend for ${orderKey}`)
+                })
                 ticketRefT.update(tData)
                   .then(() => {
                     console.log(`T:Data Updated Successfully for ${orderKey}`);
@@ -178,13 +221,21 @@ exports.processQueue = functions
             const yData = {
                 [returnresult]: {
                     1: y1,
-                    "orderKey": orderKey,
                     "serveable": false,
                     "served": false
                 }
             };
+            const ykey = {
+                [orderKey]: {
+                    "keynum": returnresult
+                }
+            };
             console.log(`Y Logger Result = ${returnresult}`);
             if (returnresult !== null) {
+                keyRefY.update(ykey)
+                .catch((error) => {
+                    console.error(`Y:Error Setting KeyLegend for ${orderKey}`)
+                })
                 ticketRefY.update(yData)
                   .then(() => {
                     console.log(`Y:Data Updated Successfully for ${orderKey}`);
@@ -194,6 +245,7 @@ exports.processQueue = functions
                   });
             }
         }
+        archiveRef.push(orderVal);
         orderRef.remove();
         console.log(`Function Finished for ${orderKey}`);
 
@@ -218,4 +270,6 @@ exports.processQueue = functions
         .catch((error) => {
             console.error(`Flag:Transaction Failed for ${orderKey} due to ${error}`);
         });
+      }
     });
+
