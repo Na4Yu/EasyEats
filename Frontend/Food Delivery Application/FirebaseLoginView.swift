@@ -32,9 +32,9 @@ struct FirebaseLoginView: View {
                                 TextField("メールアドレス",text: $textfieldmail)
                                     .textFieldStyle(RoundedBorderTextFieldStyle())
                                     .onChange(of: textfieldmail) { newvalue in
-                                        mail = newvalue + "@seiko.ac.jp"
+                                        mail = newvalue + "Mail"
                                     }
-                                Text("@seiko.ac.jp")
+                                Text("Mail")
                             }
                             .padding(.bottom)
                             SecureField("パスワード",text:$password)

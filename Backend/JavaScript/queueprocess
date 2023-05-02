@@ -245,7 +245,8 @@ exports.processQueue = functions
                   });
             }
         }
-        archiveRef.push(orderVal);
+        pushedPostRef = archiveRef.push(orderVal);
+        console.log(`OrderArchive ${orderKey} saved at ${pushedPostRef.getKey()}`);
         orderRef.remove();
         console.log(`Function Finished for ${orderKey}`);
 

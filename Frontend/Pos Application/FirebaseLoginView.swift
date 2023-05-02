@@ -1,10 +1,9 @@
 //
 //  FirebaseLoginView.swift
-//  EasyEatsKitchenTableApplication
+//  EasyEatsPOSApplication
 //
 //  Created by NaYu on 2023/03/15.
 //
-
 
 import SwiftUI
 import FirebaseAuth
@@ -18,7 +17,6 @@ struct FirebaseLoginView: View {
     @State private var onEditing:Bool = false
     @Binding var showSheet:Bool
     @Binding var isLoggedIn:Bool
-    @ObservedObject var viewModel:FirebaseDatabaseService
     var body: some View {
         GeometryReader { geometry in
             VStack (spacing: 0) {
@@ -76,7 +74,6 @@ struct FirebaseLoginView: View {
                                                 if let _ = auth?.user {
                                                     showSheet = false
                                                     isLoggedIn = true
-                                                    viewModel.usercheck()
                                                 } else {
                                                     errorMessage = ("未ログイン")
                                                     alertM = true
@@ -104,6 +101,6 @@ struct FirebaseLoginView: View {
 
 struct FirebaseLoginView_Previews: PreviewProvider {
     static var previews: some View {
-        FirebaseLoginView(showSheet : .constant(true), isLoggedIn: .constant(false), viewModel: FirebaseDatabaseService())
+        FirebaseLoginView(showSheet : .constant(true), isLoggedIn: .constant(false))
     }
 }
