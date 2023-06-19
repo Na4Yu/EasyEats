@@ -168,7 +168,7 @@ struct OrderConfirmView: View {
                                             return
                                         }
                                         print(pdfpath)
-                                        let resultmessage = printPDF(path: pdfpath, ip: "172.16.15.246")
+                                        let resultmessage = printPDF(path: pdfpath, ip: "")
                                         print("trororor")
                                         errorMessage = resultmessage
                                         alertM = true
